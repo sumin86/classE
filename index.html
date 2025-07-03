@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>영단어를 외우자</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        .screen {
+            display: none;
+        }
+        #mainMenu {
+            display: block; /* 처음에는 메인 화면만 보이도록 */
+        }
+        #topicMenu1, #topicMenu2, #topicMenu3 {
+            display: none;
+        }
+        #quizScreen {
+            display: none;
+        }
+        #answer {
+            display: none;
+            margin-top: 20px;
+            font-size: 1.2em;
+            color: rgb(0, 50, 158);
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 1em;
+            cursor: pointer;
+            margin: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="mainMenu" class="screen">
+        <h1>책 선택하기</h1>
+        <button onclick="showTopicMenu('E')">수특 영어</button>
+        <button onclick="showTopicMenu('ERP')">수특 영어 독해 연습</button>
+        <button onclick="showTopicMenu('H')">해커스 보카 수능 심화</button>
+    </div>
+
+    <div id="topicMenu1" class="screen">
+        <h1>수특 영어 몇 강?</h1>
+        <button onclick="startQuiz('first')">1강-1번~3번</button>
+        <button onclick="startQuiz('second')">1강-4번~6번</button>
+        <button onclick="startQuiz('third')">3강</button>
+        <button onclick="resetMainMenu()">돌아가기</button>
+    </div>
+
+    <div id="topicMenu2" class="screen">
+        <h1>수특 영어 독해 연습 몇 강?</h1>
+        <button onclick="startQuiz('first2')">1강</button>
+        <button onclick="startQuiz('second2')">2강</button>
+        <button onclick="startQuiz('third2')">3강</button>
+        <button onclick="resetMainMenu()">돌아가기</button>
+    </div>
+
+    <div id="topicMenu3" class="screen">
+        <h1>해커스 보카 몇 강?</h1>
+        <button onclick="startQuiz('first3')">1강</button>
+        <button onclick="startQuiz('second3')">2강</button>
+        <button onclick="startQuiz('third3')">3강</button>
+        <button onclick="resetMainMenu()">돌아가기</button>
+    </div>
+
+    <div id="quizScreen" class="screen">
+        <h1>영단어 퀴즈</h1>
+        <h2 id="word">apple</h2>
+        <button onclick="showAnswer()">정답 보기</button>
+        <button onclick="nextWord()">다음 단어 보기</button>
+        <div id="answer">뜻: 사과</div>
+        <button id="backButton" style="display: none;" onclick="resetQuiz()">돌아가기</button>
+    </div>
+
+    <script>
+        const quizzes = {
+            E: {
+                first: [
+                    { word: "category", meaning: "범주, 구분" },
+                    { word: "think through", meaning: "~에 대해 충분히 생각하다" },
+                    { word: "inject", meaning: "주입하다" },
+                    { word: "artificially", meaning: "인위적으로, 인공적으로" },
+                    { word: "abuse", meaning: "학대하다" },
+                    { word: "object", meaning: "물체" },
+                    { word: "distant", meaning: "멀리있는" },
+                    { word: "encounter", meaning: "접하다, (우연히)만나다" },
+                    { word: "exceptional", meaning: "예외적인" },
+                    { word: "apparently", meaning: "보아하니, 외관상으로는" },
+                    { word: "virtually", meaning: "거의, 사실상" },
+                    { word: "resemblace", meaning: "닮음, 비슷함" },
+                    { word: "conduct", meaning: "수행하다, 실시하다" },
+                    { word: "figure out", meaning: "~을 알아내다" },
+                    { word: "dislike", meaning: "싫어하는 것, 혐오" },
+                    { word: "intuitively", meaning: "직관적으로" },
+                    { word: "relatively", meaning: "비교적" },
+                    { word: "occupy", meaning: "차지하다" },
+                    { word: "incentive", meaning: "유인책" },
+                    { word: "clue", meaning: "단서" },
+                    { word: "piece together", meaning: "~을 종합하여 이해하다" },
+                    { word: "party", meaning: "당사자" },
+                    { word: "escalate", meaning: "경화되다, 확대되다" },
+                    { word: "contest", meaning: "경쟁" },
+                    { word: "blend", meaning: "조합, 혼합" },
+                    { word: "exaggeration", meaning: "과장" },
+                    { word: "opponent", meaning: "상대방" },
+                    { word: "compete", meaning: "경쟁하다" },
+                    { word: "deceptive", meaning: "속이는, 기만적인" },
+                    { word: "play down", meaning: "~을 축소하다, ~을 경시하다" },
+
+                ],
+                second: [
+                    { word: "doctor", meaning: "서두르다" },
+                    { word: "teacher", meaning: "침착함을 유지하다" },
+                    { word: "doctor", meaning: "주변에 있는" },
+                    { word: "doctor", meaning: "규범" },
+                    { word: "doctor", meaning: "~에 쏟아져 들어오다" },
+                    { word: "doctor", meaning: "실험실" },
+                    { word: "doctor", meaning: "설문지" },
+                    { word: "doctor", meaning: "구경하는 사람, 방관자" },
+                    { word: "doctor", meaning: "지나가는 사람, 행인" },
+                    { word: "doctor", meaning: "반응하지 않는" },
+                    { word: "doctor", meaning: "의사" },
+                    { word: "doctor", meaning: "의사" },
+                    { word: "doctor", meaning: "의사" },
+                    { word: "doctor", meaning: "의사" },
+                    { word: "doctor", meaning: "의사" },
+                    { word: "doctor", meaning: "의사" },
+                    { word: "doctor", meaning: "의사" },
+                    { word: "doctor", meaning: "의사" },
+                    { word: "doctor", meaning: "의사" },
+                    { word: "doctor", meaning: "의사" },
+                    { word: "doctor", meaning: "의사" },
+                    { word: "doctor", meaning: "의사" },
+                    { word: "doctor", meaning: "의사" },
+                    { word: "doctor", meaning: "의사" },
+                    { word: "doctor", meaning: "의사" },
+                    { word: "doctor", meaning: "의사" },
+                    { word: "doctor", meaning: "의사" },
+
+                ],
+                third: [
+                    { word: "red", meaning: "빨강" },
+                    { word: "blue", meaning: "파랑" }
+                ]
+            },
+            ERP: {
+                first2: [
+                    { word: "grape", meaning: "포도" },
+                    { word: "orange", meaning: "오렌지" }
+                ],
+                second2: [
+                    { word: "engineer", meaning: "엔지니어" },
+                    { word: "nurse", meaning: "간호사" }
+                ],
+                third2: [
+                    { word: "green", meaning: "초록" },
+                    { word: "yellow", meaning: "노랑" }
+                ]
+            },
+            H: {
+                first3: [
+                    { word: "strawberry", meaning: "딸기" }
+                ],
+                second3: [
+                    { word: "artist", meaning: "예술가" }
+                ],
+                third3: [
+                    { word: "black", meaning: "검정" }
+                ]
+            }
+        };
+
+        let currentWordIndex = 0; // 배열의 첫 번째 단어부터 시작
+        let currentQuiz = [];
+        let currentLevel = ''; // 현재 레벨 저장
+
+        function showTopicMenu(level) {
+            currentLevel = level; // 현재 레벨 저장
+            document.getElementById("mainMenu").style.display = "none";
+            document.getElementById("topicMenu1").style.display = "none";
+            document.getElementById("topicMenu2").style.display = "none";
+            document.getElementById("topicMenu3").style.display = "none";
+
+            if (level === 'E') {
+                document.getElementById("topicMenu1").style.display = "block";
+            } else if (level === 'ERP') {
+                document.getElementById("topicMenu2").style.display = "block";
+            } else if (level === 'H') {
+                document.getElementById("topicMenu3").style.display = "block";
+            }
+        }
+
+        function startQuiz(topic) {
+            document.getElementById("topicMenu1").style.display = "none";
+            document.getElementById("topicMenu2").style.display = "none";
+            document.getElementById("topicMenu3").style.display = "none";
+            document.getElementById("quizScreen").style.display = "block";
+
+            currentWordIndex = 0; // 인덱스를 0으로 초기화
+            currentQuiz = quizzes[currentLevel][topic]; // 선택한 주제에 맞는 퀴즈로 초기화
+            showNextWord(); // 첫 번째 단어 보여주기
+        }
+
+        function showAnswer() {
+            const answerDiv = document.getElementById("answer");
+            answerDiv.innerText = `뜻: ${currentQuiz[currentWordIndex].meaning}`;
+            answerDiv.style.display = "block";
+        }
+
+        function showNextWord() {
+            if (currentWordIndex >= currentQuiz.length) {
+                document.getElementById("word").innerText = "끝났습니다.";
+                document.getElementById("answer").style.display = "none";
+                document.getElementById("backButton").style.display = "block"; // Show back button
+                return;
+            }
+
+            document.getElementById("word").innerText = currentQuiz[currentWordIndex].word;
+            document.getElementById("answer").style.display = "none"; // Hide the answer
+        }
+
+        function nextWord() {
+            currentWordIndex++; // 다음 단어로 인덱스 증가
+            showNextWord(); // 다음 단어 보여주기
+        }
+
+        function resetQuiz() {
+            document.getElementById("quizScreen").style.display = "none";
+            document.getElementById("backButton").style.display = "none"; // Hide back button
+            currentWordIndex = 0; // 인덱스를 초기화
+            showTopicMenu(currentLevel); // 이전 레벨의 주제 선택 화면으로 돌아가기
+        }
+
+        function resetMainMenu() {
+            document.getElementById("mainMenu").style.display = "block";
+            document.getElementById("topicMenu1").style.display = "none";
+            document.getElementById("topicMenu2").style.display = "none";
+            document.getElementById("topicMenu3").style.display = "none";
+            document.getElementById("quizScreen").style.display = "none";
+            currentWordIndex = 0; // 인덱스를 초기화
+        }
+    </script>
+
+</body>
+</html>
